@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta name="theme-color" content="#00c853">
+  <meta name="description" content="Planejamento de lucro - organize seus ganhos, gastos e metas.">
+
+  <title>Planejamento de Lucro</title>
+
+  <link rel="manifest" href="manifest.json">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #0b0b0b;
+      color: #ffffff;
+      min-height: 100vh;
+    }
+
+    header {
+      background: #111111;
+      padding: 20px;
+      border-bottom: 2px solid #00c853;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .topo {
+      max-width: 900px;
+      margin: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+    }
+
+    .logo {
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    .logo span {
+      color: #00c853;
+    }
+
+    .menu-btn {
+      background: #00c853;
+      color: #000;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 20px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    main {
+      max-width: 900px;
+      margin: auto;
+      padding: 25px 18px 40px;
+    }
+
+    .titulo {
+      margin-bottom: 22px;
+    }
+
+    .titulo h1 {
+      font-size: 30px;
+      margin-bottom: 8px;
+    }
+
+    .titulo p {
+      color: #aaaaaa;
+      font-size: 15px;
+    }
+
+    .saldo {
+      background: #00c853;
+      color: #000000;
+      padding: 25px;
+      border-radius: 18px;
+      margin-bottom: 20px;
+      box-shadow: 0 8px 25px rgba(0, 200, 83, 0.18);
+    }
+
+    .saldo small {
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .saldo h2 {
+      font-size: 34px;
+      margin-top: 8px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+
+    .card {
+      background: #151515;
+      border: 1px solid #292929;
+      border-radius: 15px;
+      padding: 20px;
+    }
+
+    .card small {
+      color: #999999;
+    }
+
+    .card h3 {
+      margin-top: 8px;
+      font-size: 23px;
+    }
+
+    .verde {
+      color: #00c853;
+    }
+
+    .vermelho {
+      color: #ff5252;
+    }
+
+    .secao {
+      background: #151515;
+      border: 1px solid #292929;
+      border-radius: 18px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .secao h2 {
+      font-size: 20px;
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      color: #bbbbbb;
+      margin-bottom: 7px;
+      font-size: 14px;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 14px;
+      border-radius: 10px;
+      border: 1px solid #333333;
+      background: #0d0d0d;
+      color: #ffffff;
+      outline: none;
+      margin-bottom: 15px;
+      font-size: 16px;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: #00c853;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 11px;
+      background: #00c853;
+      color: #000000;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .lista {
+      margin-top: 10px;
+    }
+
+    .item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 15px 0;
+      border-bottom: 1px solid #292929;
+    }
+
+    .item:last-child {
+      border-bottom: none;
+    }
+
+    .item-info strong {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .item-info small {
+      color: #888888;
+    }
+
+    .item-valor {
+      font-weight: bold;
+    }
+
+    .vazio {
+      color: #777777;
+      text-align: center;
+      padding: 20px 0;
+    }
+
+    footer {
+      text-align: center;
+      color: #666666;
+      padding: 20px;
+      font-size: 13px;
+    }
+
+    @media (max-width: 600px) {
+      .cards {
+        grid-template-columns: 1fr;
+      }
+
+      .titulo h1 {
+        font-size: 25px;
+      }
+
+      .saldo h2 {
+        font-size: 30px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="topo">
+      <div class="logo">
+        Planejamento<span>+</span>
+      </div>
+
+      <button class="menu-btn" onclick="alert('Menu em breve')">
+        ☰
+      </button>
+    </div>
+  </header>
+
+  <main>
+
+    <div class="titulo">
+      <h1>Meu planejamento</h1>
+      <p>Controle seu dinheiro e acompanhe seu lucro.</p>
+    </div>
+
+    <section class="saldo">
+      <small>SALDO ATUAL</small>
+      <h2 id="saldo">R$ 0,00</h2>
+    </section>
+
+    <section class="cards">
+
+      <div class="card">
+        <small>ENTRADAS</small>
+        <h3 class="verde" id="entradas">
+          R$ 0,00
+        </h3>
+      </div>
+
+      <div class="card">
+        <small>SAÍDAS</small>
+        <h3 class="vermelho" id="saidas">
+          R$ 0,00
+        </h3>
+      </div>
+
+    </section>
+
+    <section class="secao">
+
+      <h2>Adicionar movimentação</h2>
+
+      <label for="descricao">Descrição</label>
+      <input
+        type="text"
+        id="descricao"
+        placeholder="Ex: Trabalho, gasolina..."
+      >
+
+      <label for="valor">Valor</label>
+      <input
+        type="number"
+        id="valor"
+        placeholder="0,00"
+        step="0.01"
+      >
+
+      <label for="tipo">Tipo</label>
+      <select id="tipo">
+        <option value="entrada">Entrada</option>
+        <option value="saida">Saída</option>
+      </select>
+
+      <button class="btn" onclick="adicionarMovimentacao()">
+        + Adicionar
+      </button>
+
+    </section>
+
+    <section class="secao">
+
+      <h2>Movimentações</h2>
+
+      <div id="lista" class="lista">
+        <div class="vazio">
+          Nenhuma movimentação adicionada.
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <footer>
+    Planejamento+ • Sua organização financeira
+  </footer>
+
+  <script>
+    let movimentacoes =
+      JSON.parse(localStorage.getItem("movimentacoes")) || [];
+
+    function formatar(valor) {
+      return valor.toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL"
+      });
+    }
+
+    function adicionarMovimentacao() {
+
+      const descricao =
+        document.getElementById("descricao").value.trim();
+
+      const valor =
+        parseFloat(document.getElementById("valor").value);
+
+      const tipo =
+        document.getElementById("tipo").value;
+
+      if (!descricao || !valor || valor <= 0) {
+        alert("Preencha a descrição e o valor.");
+        return;
+      }
+
+      movimentacoes.push({
+        descricao: descricao,
+        valor: valor,
+        tipo: tipo
+      });
+
+      localStorage.setItem(
+        "movimentacoes",
+        JSON.stringify(movimentacoes)
+      );
+
+      document.getElementById("descricao").value = "";
+      document.getElementById("valor").value = "";
+
+      atualizarTela();
+    }
+
+    function atualizarTela() {
+
+      let entradas = 0;
+      let saidas = 0;
+
+      movimentacoes.forEach(item => {
+
+        if (item.tipo === "entrada") {
+          entradas += item.valor;
+        } else {
+          saidas += item.valor;
+        }
+
+      });
+
+      const saldo = entradas - saidas;
+
+      document.getElementById("entradas").textContent =
+        formatar(entradas);
+
+      document.getElementById("saidas").textContent =
+        formatar(saidas);
+
+      document.getElementById("saldo").textContent =
+        formatar(saldo);
+
+      const lista =
+        document.getElementById("lista");
+
+      if (movimentacoes.length === 0) {
+
+        lista.innerHTML =
+          '<div class="vazio">Nenhuma movimentação adicionada.</div>';
+
+        return;
+      }
+
+      lista.innerHTML = "";
+
+      movimentacoes
+        .slice()
+        .reverse()
+        .forEach(item => {
+
+          const div =
+            document.createElement("div");
+
+          div.className = "item";
+
+          const sinal =
+            item.tipo === "entrada" ? "+" : "-";
+
+          const classe =
+            item.tipo === "entrada"
+              ? "verde"
+              : "vermelho";
+
+          div.innerHTML = `
+            <div class="item-info">
+              <strong>${item.descricao}</strong>
+              <small>
+                ${item.tipo === "entrada" ? "Entrada" : "Saída"}
+              </small>
+            </div>
+
+            <div class="item-valor ${classe}">
+              ${sinal} ${formatar(item.valor)}
+            </div>
+          `;
+
+          lista.appendChild(div);
+
+        });
+    }
+
+    atualizarTela();
+  </script>
+
+</body>
+        </html>
