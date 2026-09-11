@@ -1,0 +1,11 @@
+{
+  "name": "Planejamento de Lucro",
+  "short_name": "Lucro",
+  "description": "Aplicativo para calcular e acompanhar planejamento de lucro.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0b0b0b",
+  "theme_color": "#20c968",
+  "orientation": "portrait",
+  "lang": "pt-BR"
+}
