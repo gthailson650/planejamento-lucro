@@ -11,8 +11,14 @@
   "lang": "pt-BR",
   "icons": [
     {
-      "src": "./arquivo_00000000fa5c820eb251a86013b3ebd7.png",
-      "sizes": "1254x1254",
+      "src": "./icon-192-1.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icon-512-4.png",
+      "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
     }
