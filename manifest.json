@@ -9,5 +9,12 @@
   "theme_color": "#19d36b",
   "orientation": "portrait",
   "lang": "pt-BR",
-  "icons": []
+  "icons": [
+    {
+      "src": "./arquivo_00000000fa5c820eb251a86013b3ebd7.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
 }
