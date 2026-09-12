@@ -1,4 +1,4 @@
-const CACHE_NAME = "planejamento-lucro-v1";
+const CACHE_NAME = "meu-controle-v3";
 
 const ARQUIVOS = [
   "./",
@@ -31,6 +31,28 @@ self.addEventListener("activate", event => {
 });
 
 self.addEventListener("fetch", event => {
+  if (event.request.method !== "GET") return;
+
+  if (event.request.mode === "navigate") {
+    event.respondWith(
+      fetch(event.request)
+        .then(resposta => {
+          const copia = resposta.clone();
+
+          caches.open(CACHE_NAME).then(cache => {
+            cache.put("./index.html", copia);
+          });
+
+          return resposta;
+        })
+        .catch(() => {
+          return caches.match("./index.html");
+        })
+    );
+
+    return;
+  }
+
   event.respondWith(
     caches.match(event.request).then(resposta => {
       return resposta || fetch(event.request);
