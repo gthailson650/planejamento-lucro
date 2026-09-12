@@ -1,11 +1,13 @@
 {
-  "name": "Planejamento de Lucro",
-  "short_name": "Lucro",
-  "description": "Aplicativo para calcular e acompanhar planejamento de lucro.",
+  "name": "Meu Controle",
+  "short_name": "Meu Controle",
+  "description": "Organize suas metas, entradas, gastos e resultados.",
   "start_url": "./",
+  "scope": "./",
   "display": "standalone",
-  "background_color": "#0b0b0b",
-  "theme_color": "#20c968",
+  "background_color": "#080a0b",
+  "theme_color": "#19d36b",
   "orientation": "portrait",
-  "lang": "pt-BR"
+  "lang": "pt-BR",
+  "icons": []
 }
