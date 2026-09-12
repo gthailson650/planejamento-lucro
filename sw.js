@@ -45,9 +45,7 @@ self.addEventListener("fetch", event => {
 
           return resposta;
         })
-        .catch(() => {
-          return caches.match("./index.html");
-        })
+        .catch(() => caches.match("./index.html"))
     );
 
     return;
