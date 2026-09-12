@@ -1,465 +1,1990 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#19d36b">
+<meta name="description" content="Meu Controle - organize suas metas, entradas, gastos e resultados.">
+<link rel="manifest" href="manifest.json">
+<title>Meu Controle</title>
 
-  <meta name="theme-color" content="#00c853">
-  <meta name="description" content="Planejamento de lucro - organize seus ganhos, gastos e metas.">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080a0b;
+  --card:#111516;
+  --card2:#171c1d;
+  --border:#252c2d;
+  --green:#19d36b;
+  --green2:#0fae56;
+  --red:#ff5252;
+  --yellow:#ffc107;
+  --text:#fff;
+  --muted:#8e9995;
+}
+body{
+  font-family:Arial,Helvetica,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+}
+button,input,select{font:inherit}
+button{cursor:pointer}
+header{
+  position:sticky;
+  top:0;
+  z-index:50;
+  background:rgba(8,10,11,.96);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+}
+.top{
+  max-width:1050px;
+  margin:auto;
+  padding:16px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.logo{font-size:23px;font-weight:800}
+.logo span{color:var(--green)}
+.header-btn{
+  border:1px solid var(--border);
+  background:var(--card);
+  color:white;
+  border-radius:10px;
+  padding:9px 13px;
+}
+main{max-width:1050px;margin:auto;padding:22px 16px 90px}
+h1{font-size:29px;margin-bottom:6px}
+h2{font-size:20px;margin-bottom:15px}
+h3{font-size:18px}
+p{color:var(--muted)}
+.hidden{display:none!important}
 
-  <title>Planejamento de Lucro</title>
+/* SETUP */
+.setup{
+  max-width:560px;
+  margin:30px auto;
+}
+.setup-icon{
+  width:65px;height:65px;
+  border-radius:20px;
+  background:var(--green);
+  color:#000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:31px;
+  margin-bottom:20px;
+}
+.box{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:20px;
+  margin-bottom:18px;
+}
+label{
+  display:block;
+  color:#aeb8b4;
+  font-size:13px;
+  margin:0 0 7px;
+}
+input,select{
+  width:100%;
+  background:#0b0e0f;
+  color:#fff;
+  border:1px solid #303738;
+  border-radius:11px;
+  padding:14px;
+  outline:none;
+  margin-bottom:15px;
+}
+input:focus,select:focus{border-color:var(--green)}
+.btn{
+  width:100%;
+  border:0;
+  border-radius:12px;
+  padding:14px;
+  background:var(--green);
+  color:#000;
+  font-weight:800;
+}
+.btn.secondary{
+  background:var(--card2);
+  color:#fff;
+  border:1px solid var(--border);
+}
+.btn.danger{background:#3a1717;color:#ff7676}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.success{
+  max-width:560px;
+  margin:70px auto;
+  text-align:center;
+}
+.success-icon{
+  width:80px;height:80px;
+  background:var(--green);
+  color:#000;
+  border-radius:50%;
+  margin:0 auto 20px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-size:40px;
+  font-weight:bold;
+}
+.success h1{margin-bottom:10px}
+.success .daily{
+  background:var(--card);
+  border:1px solid var(--border);
+  padding:18px;
+  border-radius:15px;
+  margin:22px 0;
+}
+.daily strong{display:block;color:var(--green);font-size:28px;margin-top:5px}
 
-  <link rel="manifest" href="manifest.json">
+/* NAV */
+.nav{
+  display:flex;
+  gap:7px;
+  overflow-x:auto;
+  margin-bottom:20px;
+  padding-bottom:3px;
+}
+.nav button{
+  flex:0 0 auto;
+  border:1px solid var(--border);
+  background:var(--card);
+  color:#aaa;
+  padding:10px 14px;
+  border-radius:10px;
+}
+.nav button.active{
+  background:var(--green);
+  color:#000;
+  border-color:var(--green);
+  font-weight:bold;
+}
 
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+/* DASH */
+.goal-select{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:15px;
+  padding:15px;
+  margin-bottom:15px;
+}
+.goal-select select{margin:7px 0 0}
+.hero{
+  background:linear-gradient(135deg,#19d36b,#0fae56);
+  color:#000;
+  border-radius:20px;
+  padding:23px;
+  margin-bottom:15px;
+}
+.hero small{font-weight:bold}
+.hero h2{font-size:35px;margin:7px 0}
+.hero p{color:#062c18}
+.progress{
+  height:10px;
+  background:rgba(0,0,0,.18);
+  border-radius:20px;
+  overflow:hidden;
+  margin:15px 0 9px;
+}
+.progress div{
+  height:100%;
+  background:#000;
+  border-radius:20px;
+}
+.progress-info{
+  display:flex;
+  justify-content:space-between;
+  font-size:13px;
+  font-weight:bold;
+}
+.cards{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  margin-bottom:15px;
+}
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:17px;
+}
+.card small{color:var(--muted)}
+.card strong{display:block;font-size:22px;margin-top:7px}
+.green{color:var(--green)}
+.red{color:var(--red)}
+.yellow{color:var(--yellow)}
 
-    body {
-      font-family: Arial, Helvetica, sans-serif;
-      background: #0b0b0b;
-      color: #ffffff;
-      min-height: 100vh;
-    }
+.alert{
+  border-radius:14px;
+  padding:14px;
+  margin-bottom:12px;
+  background:#241f0b;
+  border:1px solid #594b13;
+  color:#ffe082;
+}
+.alert.green-alert{
+  background:#0d2719;
+  border-color:#145a34;
+  color:#7ff0aa;
+}
+.alert.red-alert{
+  background:#2b1111;
+  border-color:#681d1d;
+  color:#ff8585;
+}
 
-    header {
-      background: #111111;
-      padding: 20px;
-      border-bottom: 2px solid #00c853;
-      position: sticky;
-      top: 0;
-      z-index: 10;
-    }
+/* CHART */
+canvas{
+  width:100%;
+  height:230px;
+  background:#0c1011;
+  border-radius:12px;
+  display:block;
+}
 
-    .topo {
-      max-width: 900px;
-      margin: auto;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 15px;
-    }
+/* DAILY */
+.mode{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-bottom:15px;
+}
+.mode button{
+  background:#0c1011;
+  color:#aaa;
+  border:1px solid var(--border);
+  padding:12px 8px;
+  border-radius:10px;
+}
+.mode button.active{
+  border-color:var(--green);
+  color:var(--green);
+}
+.daily-result{
+  background:#0d2719;
+  border:1px solid #145a34;
+  padding:15px;
+  border-radius:12px;
+  margin-bottom:15px;
+}
+.daily-result strong{font-size:23px;color:var(--green)}
+.item{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  padding:15px 0;
+  border-bottom:1px solid var(--border);
+}
+.item:last-child{border-bottom:0}
+.item-info{min-width:0}
+.item-info strong{display:block;margin-bottom:5px;word-break:break-word}
+.item-info small{color:var(--muted)}
+.item-right{text-align:right;white-space:nowrap}
+.actions{display:flex;gap:6px;margin-top:7px;justify-content:flex-end}
+.action{
+  border:1px solid var(--border);
+  background:#0b0e0f;
+  color:#aaa;
+  padding:6px 9px;
+  border-radius:8px;
+  font-size:12px;
+}
+.action.delete{color:#ff6b6b}
 
-    .logo {
-      font-size: 22px;
-      font-weight: bold;
-    }
+/* CATEGORIES */
+.cat{
+  margin-bottom:14px;
+}
+.cat-head{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:5px;
+  font-size:13px;
+}
+.cat-bar{
+  height:8px;
+  background:#202526;
+  border-radius:10px;
+  overflow:hidden;
+}
+.cat-bar div{
+  height:100%;
+  background:var(--green);
+  border-radius:10px;
+}
 
-    .logo span {
-      color: #00c853;
-    }
+/* GOALS */
+.goal-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:17px;
+  margin-bottom:12px;
+}
+.goal-card.selected{border-color:var(--green)}
+.goal-top{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+}
+.goal-percent{
+  color:var(--green);
+  font-weight:bold;
+}
+.goal-meta{
+  display:flex;
+  justify-content:space-between;
+  color:var(--muted);
+  font-size:13px;
+  margin:8px 0;
+}
+.goal-actions{display:flex;gap:7px;margin-top:12px}
+.goal-actions button{flex:1}
 
-    .menu-btn {
-      background: #00c853;
-      color: #000;
-      border: none;
-      border-radius: 10px;
-      padding: 10px 14px;
-      font-size: 20px;
-      cursor: pointer;
-      font-weight: bold;
-    }
+/* EMPTY */
+.empty{
+  text-align:center;
+  padding:30px 10px;
+  color:#707a76;
+}
+.badge{
+  display:inline-block;
+  font-size:11px;
+  padding:4px 8px;
+  border-radius:20px;
+  background:#202727;
+  color:#aaa;
+}
 
-    main {
-      max-width: 900px;
-      margin: auto;
-      padding: 25px 18px 40px;
-    }
+/* FOOT */
+footer{text-align:center;color:#555;padding:20px;font-size:12px}
 
-    .titulo {
-      margin-bottom: 22px;
-    }
-
-    .titulo h1 {
-      font-size: 30px;
-      margin-bottom: 8px;
-    }
-
-    .titulo p {
-      color: #aaaaaa;
-      font-size: 15px;
-    }
-
-    .saldo {
-      background: #00c853;
-      color: #000000;
-      padding: 25px;
-      border-radius: 18px;
-      margin-bottom: 20px;
-      box-shadow: 0 8px 25px rgba(0, 200, 83, 0.18);
-    }
-
-    .saldo small {
-      font-size: 14px;
-      font-weight: bold;
-    }
-
-    .saldo h2 {
-      font-size: 34px;
-      margin-top: 8px;
-    }
-
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 14px;
-      margin-bottom: 22px;
-    }
-
-    .card {
-      background: #151515;
-      border: 1px solid #292929;
-      border-radius: 15px;
-      padding: 20px;
-    }
-
-    .card small {
-      color: #999999;
-    }
-
-    .card h3 {
-      margin-top: 8px;
-      font-size: 23px;
-    }
-
-    .verde {
-      color: #00c853;
-    }
-
-    .vermelho {
-      color: #ff5252;
-    }
-
-    .secao {
-      background: #151515;
-      border: 1px solid #292929;
-      border-radius: 18px;
-      padding: 20px;
-      margin-bottom: 20px;
-    }
-
-    .secao h2 {
-      font-size: 20px;
-      margin-bottom: 15px;
-    }
-
-    label {
-      display: block;
-      color: #bbbbbb;
-      margin-bottom: 7px;
-      font-size: 14px;
-    }
-
-    input,
-    select {
-      width: 100%;
-      padding: 14px;
-      border-radius: 10px;
-      border: 1px solid #333333;
-      background: #0d0d0d;
-      color: #ffffff;
-      outline: none;
-      margin-bottom: 15px;
-      font-size: 16px;
-    }
-
-    input:focus,
-    select:focus {
-      border-color: #00c853;
-    }
-
-    .btn {
-      width: 100%;
-      padding: 15px;
-      border: none;
-      border-radius: 11px;
-      background: #00c853;
-      color: #000000;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .btn:active {
-      transform: scale(0.98);
-    }
-
-    .lista {
-      margin-top: 10px;
-    }
-
-    .item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      padding: 15px 0;
-      border-bottom: 1px solid #292929;
-    }
-
-    .item:last-child {
-      border-bottom: none;
-    }
-
-    .item-info strong {
-      display: block;
-      margin-bottom: 5px;
-    }
-
-    .item-info small {
-      color: #888888;
-    }
-
-    .item-valor {
-      font-weight: bold;
-    }
-
-    .vazio {
-      color: #777777;
-      text-align: center;
-      padding: 20px 0;
-    }
-
-    footer {
-      text-align: center;
-      color: #666666;
-      padding: 20px;
-      font-size: 13px;
-    }
-
-    @media (max-width: 600px) {
-      .cards {
-        grid-template-columns: 1fr;
-      }
-
-      .titulo h1 {
-        font-size: 25px;
-      }
-
-      .saldo h2 {
-        font-size: 30px;
-      }
-    }
-  </style>
+@media(max-width:700px){
+  .cards{grid-template-columns:1fr 1fr}
+  .cards .card:last-child{grid-column:1/-1}
+}
+@media(max-width:500px){
+  main{padding:18px 12px 80px}
+  .row{grid-template-columns:1fr}
+  .cards{grid-template-columns:1fr 1fr}
+  .card strong{font-size:18px}
+  h1{font-size:25px}
+}
+</style>
 </head>
 
 <body>
 
-  <header>
-    <div class="topo">
-      <div class="logo">
-        Planejamento<span>+</span>
+<header id="header" class="hidden">
+  <div class="top">
+    <div class="logo">Meu <span>Controle</span></div>
+    <button class="header-btn" onclick="abrirAba('metas')">🎯 Metas</button>
+  </div>
+</header>
+
+<main>
+
+<!-- CRIAR META -->
+<section id="setup" class="setup">
+  <div class="setup-icon">🎯</div>
+  <h1>Criar minha meta</h1>
+  <p style="margin-bottom:22px">
+    Defina onde você quer chegar e deixe o Meu Controle acompanhar sua evolução.
+  </p>
+
+  <div class="box">
+    <label>Nome da meta</label>
+    <input id="metaNome" type="text" placeholder="Ex: Minha primeira meta">
+
+    <label>Valor da meta</label>
+    <input id="metaValor" type="number" step="0.01" min="0.01" placeholder="Ex: 5000">
+
+    <label>Período</label>
+    <select id="metaPeriodo" onchange="mostrarDiasCustom()">
+      <option value="30">30 dias</option>
+      <option value="60">60 dias</option>
+      <option value="90">90 dias</option>
+      <option value="custom">Personalizado</option>
+    </select>
+
+    <div id="customBox" class="hidden">
+      <label>Quantidade de dias</label>
+      <input id="metaDiasCustom" type="number" min="1" max="3650" placeholder="Ex: 120">
+    </div>
+
+    <label>Data de início</label>
+    <input id="metaInicio" type="date">
+
+    <label>Limite de gastos <span style="color:#666">(opcional)</span></label>
+    <input id="metaLimite" type="number" step="0.01" min="0" placeholder="Ex: 1000">
+
+    <button class="btn" onclick="criarPrimeiraMeta()">Criar minha meta</button>
+  </div>
+</section>
+
+<!-- SUCESSO -->
+<section id="success" class="success hidden">
+  <div class="success-icon">✓</div>
+  <h1>Meta criada!</h1>
+  <p id="successText"></p>
+
+  <div class="daily">
+    <span>Ritmo médio necessário</span>
+    <strong id="successDaily">R$ 0,00/dia</strong>
+    <small style="color:#777">Isso é uma referência para acompanhar seu progresso.</small>
+  </div>
+
+  <button class="btn" onclick="comecarDia1()">Começar Dia 1</button>
+</section>
+
+<!-- APP -->
+<section id="app" class="hidden">
+
+  <div class="nav">
+    <button data-tab="inicio" onclick="abrirAba('inicio')">Início</button>
+    <button data-tab="dia" onclick="abrirAba('dia')">📅 Dia</button>
+    <button data-tab="gastos" onclick="abrirAba('gastos')">💸 Gastos</button>
+    <button data-tab="metas" onclick="abrirAba('metas')">🎯 Metas</button>
+  </div>
+
+  <!-- INÍCIO -->
+  <section id="tab-inicio">
+
+    <div class="goal-select">
+      <label>Meta ativa</label>
+      <select id="metaAtiva" onchange="trocarMeta(this.value)"></select>
+    </div>
+
+    <div id="alertas"></div>
+
+    <div class="hero">
+      <small>RESULTADO DA META</small>
+      <h2 id="dashResultado">R$ 0,00</h2>
+      <p id="dashMetaTexto">de R$ 0,00</p>
+
+      <div class="progress">
+        <div id="dashProgress"></div>
       </div>
 
-      <button class="menu-btn" onclick="alert('Menu em breve')">
-        ☰
-      </button>
-    </div>
-  </header>
-
-  <main>
-
-    <div class="titulo">
-      <h1>Meu planejamento</h1>
-      <p>Controle seu dinheiro e acompanhe seu lucro.</p>
+      <div class="progress-info">
+        <span id="dashPercent">0%</span>
+        <span id="dashRestante">Faltam R$ 0,00</span>
+      </div>
     </div>
 
-    <section class="saldo">
-      <small>SALDO ATUAL</small>
-      <h2 id="saldo">R$ 0,00</h2>
-    </section>
-
-    <section class="cards">
-
+    <div class="cards">
       <div class="card">
         <small>ENTRADAS</small>
-        <h3 class="verde" id="entradas">
-          R$ 0,00
-        </h3>
+        <strong class="green" id="dashEntradas">R$ 0,00</strong>
       </div>
-
       <div class="card">
-        <small>SAÍDAS</small>
-        <h3 class="vermelho" id="saidas">
-          R$ 0,00
-        </h3>
+        <small>GASTOS</small>
+        <strong class="red" id="dashGastos">R$ 0,00</strong>
+      </div>
+      <div class="card">
+        <small>DIAS RESTANTES</small>
+        <strong id="dashDias">0</strong>
+      </div>
+    </div>
+
+    <div class="box">
+      <h2>Evolução</h2>
+      <canvas id="grafico"></canvas>
+    </div>
+
+    <div class="box">
+      <h2>Gastos por categoria</h2>
+      <div id="categorias"></div>
+    </div>
+
+  </section>
+
+  <!-- DIA -->
+  <section id="tab-dia" class="hidden">
+
+    <div class="box">
+      <h2 id="diaTitulo">Controle do dia</h2>
+
+      <label>Data</label>
+      <input id="diaData" type="date">
+
+      <div class="mode">
+        <button id="modoSaldo" class="active" onclick="selecionarModo('saldo')">
+          Saldo inicial + final
+        </button>
+        <button id="modoMovimento" onclick="selecionarModo('movimento')">
+          Entrada + saída
+        </button>
       </div>
 
-    </section>
+      <div id="camposSaldo">
+        <label>Saldo inicial</label>
+        <input id="saldoInicial" type="number" step="0.01" placeholder="0,00">
 
-    <section class="secao">
+        <label>Saldo final</label>
+        <input id="saldoFinal" type="number" step="0.01" placeholder="0,00">
+      </div>
 
-      <h2>Adicionar movimentação</h2>
+      <div id="camposMovimento" class="hidden">
+        <label>Entrada do dia</label>
+        <input id="entradaDia" type="number" step="0.01" placeholder="0,00">
 
-      <label for="descricao">Descrição</label>
-      <input
-        type="text"
-        id="descricao"
-        placeholder="Ex: Trabalho, gasolina..."
-      >
+        <label>Saída do dia</label>
+        <input id="saidaDia" type="number" step="0.01" placeholder="0,00">
 
-      <label for="valor">Valor</label>
-      <input
-        type="number"
-        id="valor"
-        placeholder="0,00"
-        step="0.01"
-      >
+        <label>Categoria da saída</label>
+        <select id="categoriaDia"></select>
 
-      <label for="tipo">Tipo</label>
-      <select id="tipo">
-        <option value="entrada">Entrada</option>
-        <option value="saida">Saída</option>
-      </select>
+        <label style="display:flex;gap:8px;align-items:center;color:#aaa;margin-top:2px">
+          <input id="lancarFinanceiro" type="checkbox" checked style="width:auto;margin:0">
+          Lançar também no resumo financeiro
+        </label>
+      </div>
 
-      <button class="btn" onclick="adicionarMovimentacao()">
-        + Adicionar
-      </button>
+      <label>Observação <span style="color:#666">(opcional)</span></label>
+      <input id="diaObs" type="text" placeholder="Ex: Dia tranquilo">
 
-    </section>
+      <div class="daily-result">
+        Resultado do dia:
+        <strong id="resultadoDia">R$ 0,00</strong>
+      </div>
 
-    <section class="secao">
+      <button id="btnSalvarDia" class="btn" onclick="salvarDia()">Salvar dia</button>
+      <button id="btnCancelarDia" class="btn secondary hidden" style="margin-top:8px" onclick="cancelarEdicaoDia()">Cancelar edição</button>
+    </div>
 
-      <h2>Movimentações</h2>
+    <div class="box">
+      <h2>Histórico diário</h2>
+      <div id="historicoDias"></div>
+    </div>
 
-      <div id="lista" class="lista">
-        <div class="vazio">
-          Nenhuma movimentação adicionada.
+  </section>
+
+  <!-- GASTOS -->
+  <section id="tab-gastos" class="hidden">
+
+    <div class="box">
+      <h2>Adicionar gasto</h2>
+
+      <label>Descrição</label>
+      <input id="gastoDescricao" type="text" placeholder="Ex: Gasolina">
+
+      <label>Valor</label>
+      <input id="gastoValor" type="number" step="0.01" min="0.01" placeholder="0,00">
+
+      <label>Categoria</label>
+      <select id="gastoCategoria" onchange="mostrarNovaCategoria()"></select>
+
+      <div id="novaCategoriaBox" class="hidden">
+        <label>Nome da nova categoria</label>
+        <input id="novaCategoria" type="text" placeholder="Ex: Trabalho">
+      </div>
+
+      <label>Data</label>
+      <input id="gastoData" type="date">
+
+      <button id="btnSalvarGasto" class="btn" onclick="salvarGasto()">Adicionar gasto</button>
+      <button id="btnCancelarGasto" class="btn secondary hidden" style="margin-top:8px" onclick="cancelarEdicaoGasto()">Cancelar edição</button>
+    </div>
+
+    <div class="box">
+      <h2>Gastos da meta</h2>
+      <div id="listaGastos"></div>
+    </div>
+
+  </section>
+
+  <!-- METAS -->
+  <section id="tab-metas" class="hidden">
+
+    <div class="box">
+      <h2>Nova meta</h2>
+
+      <label>Nome</label>
+      <input id="novaMetaNome" type="text" placeholder="Ex: Comprar minha moto">
+
+      <label>Valor</label>
+      <input id="novaMetaValor" type="number" step="0.01" min="0.01" placeholder="Ex: 10000">
+
+      <div class="row">
+        <div>
+          <label>Dias</label>
+          <input id="novaMetaDias" type="number" min="1" placeholder="30">
+        </div>
+        <div>
+          <label>Início</label>
+          <input id="novaMetaInicio" type="date">
         </div>
       </div>
 
-    </section>
+      <label>Limite de gastos <span style="color:#666">(opcional)</span></label>
+      <input id="novaMetaLimite" type="number" step="0.01" placeholder="0,00">
 
-  </main>
+      <button class="btn" onclick="adicionarMeta()">Adicionar nova meta</button>
+    </div>
 
-  <footer>
-    Planejamento+ • Sua organização financeira
-  </footer>
+    <div>
+      <h2>Minhas metas</h2>
+      <div id="listaMetas"></div>
+    </div>
 
-  <script>
-    let movimentacoes =
-      JSON.parse(localStorage.getItem("movimentacoes")) || [];
+    <div class="box">
+      <h2>Dados</h2>
+      <button class="btn secondary" onclick="exportarDados()">⬇ Exportar meus dados</button>
+      <button class="btn secondary" style="margin-top:8px" onclick="importarDados()">⬆ Importar dados</button>
+      <button class="btn danger" style="margin-top:8px" onclick="apagarTudo()">Apagar todos os dados</button>
+    </div>
 
-    function formatar(valor) {
-      return valor.toLocaleString("pt-BR", {
-        style: "currency",
-        currency: "BRL"
+  </section>
+
+</section>
+</main>
+
+<footer>Meu Controle • Organização financeira</footer>
+
+<script>
+const STORAGE_KEY = "meu_controle_v2";
+
+const CATEGORIAS_PADRAO = [
+  "Alimentação",
+  "Transporte",
+  "Casa",
+  "Contas",
+  "Compras",
+  "Lazer",
+  "Dívidas",
+  "Outros"
+];
+
+let estado = carregarEstado();
+let modoDia = "saldo";
+let editandoDiaId = null;
+let editandoGastoId = null;
+
+/* ---------- UTILIDADES ---------- */
+
+function hoje(){
+  const d = new Date();
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
+
+function dinheiro(v){
+  return Number(v||0).toLocaleString("pt-BR",{
+    style:"currency",
+    currency:"BRL"
+  });
+}
+
+function numero(id){
+  return parseFloat(document.getElementById(id).value)||0;
+}
+
+function escapeHTML(text){
+  return String(text??"")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+}
+
+function id(){
+  return Date.now().toString(36)+"_"+Math.random().toString(36).slice(2,8);
+}
+
+function salvarEstado(){
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(estado));
+}
+
+function carregarEstado(){
+  try{
+    const salvo=localStorage.getItem(STORAGE_KEY);
+
+    if(salvo){
+      const obj=JSON.parse(salvo);
+
+      obj.goals=obj.goals||[];
+      obj.movements=obj.movements||[];
+      obj.daily=obj.daily||[];
+      obj.categories=obj.categories||CATEGORIAS_PADRAO.slice();
+
+      return obj;
+    }
+  }catch(e){}
+
+  return {
+    goals:[],
+    movements:[],
+    daily:[],
+    categories:CATEGORIAS_PADRAO.slice(),
+    activeGoalId:null
+  };
+}
+
+function metaAtiva(){
+  return estado.goals.find(g=>g.id===estado.activeGoalId)||estado.goals[0]||null;
+}
+
+function dataFinalMeta(meta){
+  const d=new Date(meta.start+"T00:00:00");
+  d.setDate(d.getDate()+Number(meta.days)-1);
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
+
+function diasDecorridos(meta){
+  const inicio=new Date(meta.start+"T00:00:00");
+  const agora=new Date(hoje()+"T00:00:00");
+  const diff=Math.floor((agora-inicio)/86400000);
+  return Math.max(0,Math.min(Number(meta.days),diff+1));
+}
+
+function diasRestantes(meta){
+  return Math.max(0,Number(meta.days)-diasDecorridos(meta));
+}
+
+function movimentosMeta(meta){
+  if(!meta)return [];
+  return estado.movements.filter(m=>m.goalId===meta.id);
+}
+
+function totaisMeta(meta){
+  const lista=movimentosMeta(meta);
+  let entradas=0,gastos=0;
+
+  lista.forEach(m=>{
+    if(m.type==="entrada") entradas+=Number(m.amount);
+    else gastos+=Number(m.amount);
+  });
+
+  return {
+    entradas,
+    gastos,
+    resultado:entradas-gastos
+  };
+}
+
+function progresso(meta){
+  if(!meta)return 0;
+  const t=totaisMeta(meta);
+  return Math.max(0,Math.min(100,(t.resultado/Number(meta.target))*100));
+}
+
+function resultadoDiaObj(d){
+  if(d.mode==="saldo"){
+    return Number(d.final||0)-Number(d.initial||0);
+  }
+  return Number(d.entry||0)-Number(d.exit||0);
+}
+
+/* ---------- INICIALIZAÇÃO ---------- */
+
+document.addEventListener("DOMContentLoaded",()=>{
+  document.getElementById("metaInicio").value=hoje();
+  document.getElementById("diaData").value=hoje();
+  document.getElementById("gastoData").value=hoje();
+  document.getElementById("novaMetaInicio").value=hoje();
+
+  prepararCategorias();
+
+  if(estado.goals.length){
+    document.getElementById("setup").classList.add("hidden");
+    document.getElementById("header").classList.remove("hidden");
+    document.getElementById("app").classList.remove("hidden");
+
+    if(!estado.activeGoalId) estado.activeGoalId=estado.goals[0].id;
+
+    salvarEstado();
+    atualizarTudo();
+    abrirAba("inicio");
+  }
+});
+
+function mostrarDiasCustom(){
+  document.getElementById("customBox")
+    .classList.toggle(
+      "hidden",
+      document.getElementById("metaPeriodo").value!=="custom"
+    );
+}
+
+/* ---------- PRIMEIRA META ---------- */
+
+function criarPrimeiraMeta(){
+
+  const nome=document.getElementById("metaNome").value.trim()||"Minha meta";
+  const target=numero("metaValor");
+  const periodo=document.getElementById("metaPeriodo").value;
+  const days=periodo==="custom"
+    ? Number(document.getElementById("metaDiasCustom").value)
+    : Number(periodo);
+
+  const start=document.getElementById("metaInicio").value||hoje();
+  const limit=numero("metaLimite");
+
+  if(target<=0){
+    alert("Informe um valor válido para a meta.");
+    return;
+  }
+
+  if(days<=0){
+    alert("Informe uma quantidade de dias válida.");
+    return;
+  }
+
+  const meta={
+    id:id(),
+    name:nome,
+    target,
+    days,
+    start,
+    limit,
+    createdAt:new Date().toISOString()
+  };
+
+  estado.goals.push(meta);
+  estado.activeGoalId=meta.id;
+
+  migrarDadosAntigos(meta);
+  salvarEstado();
+
+  document.getElementById("setup").classList.add("hidden");
+  document.getElementById("success").classList.remove("hidden");
+
+  document.getElementById("successText").textContent=
+    "Sua meta de "+dinheiro(target)+" foi criada para "+days+" dias.";
+
+  document.getElementById("successDaily").textContent=
+    dinheiro(target/days)+"/dia";
+}
+
+function migrarDadosAntigos(meta){
+
+  try{
+    const antigo=JSON.parse(localStorage.getItem("movimentacoes")||"[]");
+
+    if(!Array.isArray(antigo)||!antigo.length)return;
+
+    antigo.forEach(m=>{
+      estado.movements.push({
+        id:id(),
+        goalId:meta.id,
+        date:hoje(),
+        type:m.tipo==="entrada"?"entrada":"saida",
+        description:m.descricao||"Movimentação importada",
+        amount:Number(m.valor)||0,
+        category:m.tipo==="entrada"?"Entrada":"Outros"
       });
+    });
+
+    localStorage.removeItem("movimentacoes");
+  }catch(e){}
+}
+
+function comecarDia1(){
+  document.getElementById("success").classList.add("hidden");
+  document.getElementById("header").classList.remove("hidden");
+  document.getElementById("app").classList.remove("hidden");
+
+  atualizarTudo();
+  abrirAba("dia");
+
+  const meta=metaAtiva();
+  if(meta){
+    document.getElementById("diaData").value=
+      hoje()>=meta.start?hoje():meta.start;
+  }
+}
+
+/* ---------- NAVEGAÇÃO ---------- */
+
+function abrirAba(tab){
+
+  ["inicio","dia","gastos","metas"].forEach(t=>{
+    document.getElementById("tab-"+t)
+      .classList.toggle("hidden",t!==tab);
+  });
+
+  document.querySelectorAll(".nav button").forEach(b=>{
+    b.classList.toggle("active",b.dataset.tab===tab);
+  });
+
+  if(tab==="inicio") desenharGrafico();
+}
+
+/* ---------- META ATIVA ---------- */
+
+function trocarMeta(idMeta){
+  estado.activeGoalId=idMeta;
+  salvarEstado();
+  atualizarTudo();
+}
+
+function atualizarSelectMeta(){
+
+  const select=document.getElementById("metaAtiva");
+
+  select.innerHTML=estado.goals.map(g=>`
+    <option value="${g.id}" ${g.id===estado.activeGoalId?"selected":""}>
+      ${escapeHTML(g.name)} • ${dinheiro(g.target)}
+    </option>
+  `).join("");
+}
+
+/* ---------- DASHBOARD ---------- */
+
+function atualizarDashboard(){
+
+  const meta=metaAtiva();
+  if(!meta)return;
+
+  const t=totaisMeta(meta);
+  const pct=progresso(meta);
+  const restante=Math.max(0,Number(meta.target)-t.resultado);
+
+  document.getElementById("dashResultado").textContent=dinheiro(t.resultado);
+  document.getElementById("dashMetaTexto").textContent=
+    "de "+dinheiro(meta.target);
+
+  document.getElementById("dashProgress").style.width=
+    Math.min(100,pct)+"%";
+
+  document.getElementById("dashPercent").textContent=
+    Math.round(pct)+"%";
+
+  document.getElementById("dashRestante").textContent=
+    restante>0?"Faltam "+dinheiro(restante):"Meta atingida!";
+
+  document.getElementById("dashEntradas").textContent=dinheiro(t.entradas);
+  document.getElementById("dashGastos").textContent=dinheiro(t.gastos);
+  document.getElementById("dashDias").textContent=diasRestantes(meta);
+
+  atualizarAlertas(meta,t,pct);
+  atualizarCategorias(meta);
+}
+
+function atualizarAlertas(meta,t,pct){
+
+  const area=document.getElementById("alertas");
+  const alertas=[];
+
+  if(pct>=100){
+    alertas.push(
+      `<div class="alert green-alert">🎉 <strong>Meta atingida!</strong> Você chegou ao valor definido.</div>`
+    );
+  }
+
+  if(meta.limit>0){
+
+    const percentualGasto=(t.gastos/meta.limit)*100;
+
+    if(percentualGasto>=100){
+      alertas.push(
+        `<div class="alert red-alert">🚨 <strong>Limite de gastos ultrapassado.</strong> Você gastou ${dinheiro(t.gastos)} de ${dinheiro(meta.limit)}.</div>`
+      );
+    }else if(percentualGasto>=80){
+      alertas.push(
+        `<div class="alert">⚠️ Você já utilizou ${Math.round(percentualGasto)}% do seu limite de gastos.</div>`
+      );
+    }
+  }
+
+  const dias=diasDecorridos(meta);
+  const esperado=meta.target*(dias/meta.days);
+
+  if(dias>0 && dias<meta.days && t.resultado<esperado*.8){
+    alertas.push(
+      `<div class="alert">📉 <strong>Atenção ao ritmo.</strong> Seu resultado está abaixo de 80% do ritmo esperado para hoje.</div>`
+    );
+  }
+
+  area.innerHTML=alertas.join("");
+}
+
+/* ---------- CATEGORIAS ---------- */
+
+function prepararCategorias(){
+
+  const options=
+    estado.categories.map(c=>
+      `<option value="${escapeHTML(c)}">${escapeHTML(c)}</option>`
+    ).join("")+
+    `<option value="__custom">＋ Criar nova categoria</option>`;
+
+  document.getElementById("gastoCategoria").innerHTML=options;
+  document.getElementById("categoriaDia").innerHTML=
+    estado.categories.map(c=>
+      `<option value="${escapeHTML(c)}">${escapeHTML(c)}</option>`
+    ).join("");
+}
+
+function mostrarNovaCategoria(){
+
+  document.getElementById("novaCategoriaBox")
+    .classList.toggle(
+      "hidden",
+      document.getElementById("gastoCategoria").value!=="__custom"
+    );
+}
+
+function obterCategoriaGasto(){
+
+  let categoria=document.getElementById("gastoCategoria").value;
+
+  if(categoria==="__custom"){
+
+    categoria=document.getElementById("novaCategoria").value.trim();
+
+    if(!categoria){
+      alert("Digite o nome da nova categoria.");
+      return null;
     }
 
-    function adicionarMovimentacao() {
+    if(!estado.categories.includes(categoria)){
+      estado.categories.push(categoria);
+    }
+  }
 
-      const descricao =
-        document.getElementById("descricao").value.trim();
+  return categoria;
+}
 
-      const valor =
-        parseFloat(document.getElementById("valor").value);
+function atualizarCategorias(meta){
 
-      const tipo =
-        document.getElementById("tipo").value;
+  const area=document.getElementById("categorias");
+  const lista=movimentosMeta(meta)
+    .filter(m=>m.type==="saida");
 
-      if (!descricao || !valor || valor <= 0) {
-        alert("Preencha a descrição e o valor.");
-        return;
+  if(!lista.length){
+    area.innerHTML='<div class="empty">Nenhum gasto registrado.</div>';
+    return;
+  }
+
+  const soma={};
+
+  lista.forEach(m=>{
+    const c=m.category||"Outros";
+    soma[c]=(soma[c]||0)+Number(m.amount);
+  });
+
+  const total=Object.values(soma).reduce((a,b)=>a+b,0);
+
+  area.innerHTML=Object.entries(soma)
+    .sort((a,b)=>b[1]-a[1])
+    .map(([cat,val])=>{
+      const pct=total?val/total*100:0;
+      return `
+        <div class="cat">
+          <div class="cat-head">
+            <span>${escapeHTML(cat)}</span>
+            <strong>${dinheiro(val)}</strong>
+          </div>
+          <div class="cat-bar">
+            <div style="width:${pct}%"></div>
+          </div>
+        </div>
+      `;
+    }).join("");
+}
+
+/* ---------- GRÁFICO ---------- */
+
+function desenharGrafico(){
+
+  const canvas=document.getElementById("grafico");
+  if(!canvas)return;
+
+  const rect=canvas.getBoundingClientRect();
+  const ratio=window.devicePixelRatio||1;
+
+  canvas.width=Math.max(300,rect.width*ratio);
+  canvas.height=230*ratio;
+
+  const ctx=canvas.getContext("2d");
+  ctx.scale(ratio,ratio);
+
+  const w=rect.width;
+  const h=230;
+
+  ctx.clearRect(0,0,w,h);
+
+  const meta=metaAtiva();
+  if(!meta){
+    return;
+  }
+
+  const movs=movimentosMeta(meta)
+    .slice()
+    .sort((a,b)=>a.date.localeCompare(b.date));
+
+  if(!movs.length){
+
+    ctx.fillStyle="#707a76";
+    ctx.font="14px Arial";
+    ctx.textAlign="center";
+    ctx.fillText("Adicione entradas e gastos para ver a evolução.",w/2,h/2);
+    return;
+  }
+
+  const porData={};
+
+  movs.forEach(m=>{
+    if(!porData[m.date])porData[m.date]=0;
+    porData[m.date]+=
+      m.type==="entrada"
+        ? Number(m.amount)
+        : -Number(m.amount);
+  });
+
+  let acumulado=0;
+  const pontos=[];
+
+  Object.keys(porData).sort().forEach(data=>{
+    acumulado+=porData[data];
+    pontos.push({
+      data,
+      valor:acumulado
+    });
+  });
+
+  if(pontos.length===1){
+    pontos.push({
+      data:pontos[0].data,
+      valor:pontos[0].valor
+    });
+  }
+
+  const vals=pontos.map(p=>p.valor);
+  let min=Math.min(0,...vals);
+  let max=Math.max(0,...vals);
+
+  if(min===max){max=min+1}
+
+  const pad=25;
+
+  ctx.strokeStyle="#252c2d";
+  ctx.lineWidth=1;
+
+  for(let i=0;i<4;i++){
+    const y=pad+(h-pad*2)*(i/3);
+    ctx.beginPath();
+    ctx.moveTo(pad,y);
+    ctx.lineTo(w-pad,y);
+    ctx.stroke();
+  }
+
+  ctx.strokeStyle="#19d36b";
+  ctx.lineWidth=3;
+  ctx.beginPath();
+
+  pontos.forEach((p,i)=>{
+    const x=pad+(w-pad*2)*(i/(pontos.length-1));
+    const y=pad+(h-pad*2)*(1-(p.valor-min)/(max-min));
+
+    if(i===0)ctx.moveTo(x,y);
+    else ctx.lineTo(x,y);
+  });
+
+  ctx.stroke();
+
+  pontos.forEach((p,i)=>{
+    const x=pad+(w-pad*2)*(i/(pontos.length-1));
+    const y=pad+(h-pad*2)*(1-(p.valor-min)/(max-min));
+
+    ctx.fillStyle="#19d36b";
+    ctx.beginPath();
+    ctx.arc(x,y,4,0,Math.PI*2);
+    ctx.fill();
+  });
+
+  ctx.fillStyle="#8e9995";
+  ctx.font="11px Arial";
+  ctx.textAlign="left";
+  ctx.fillText(dinheiro(min),5,h-8);
+  ctx.textAlign="right";
+  ctx.fillText(dinheiro(max),w-5,15);
+}
+
+/* ---------- MODO DIA ---------- */
+
+function selecionarModo(modo){
+
+  modoDia=modo;
+
+  document.getElementById("camposSaldo")
+    .classList.toggle("hidden",modo!=="saldo");
+
+  document.getElementById("camposMovimento")
+    .classList.toggle("hidden",modo!=="movimento");
+
+  document.getElementById("modoSaldo")
+    .classList.toggle("active",modo==="saldo");
+
+  document.getElementById("modoMovimento")
+    .classList.toggle("active",modo==="movimento");
+
+  calcularResultadoDia();
+}
+
+function calcularResultadoDia(){
+
+  let resultado=0;
+
+  if(modoDia==="saldo"){
+    resultado=numero("saldoFinal")-numero("saldoInicial");
+  }else{
+    resultado=numero("entradaDia")-numero("saidaDia");
+  }
+
+  const el=document.getElementById("resultadoDia");
+  el.textContent=dinheiro(resultado);
+  el.style.color=resultado>=0?"var(--green)":"var(--red)";
+}
+
+["saldoInicial","saldoFinal","entradaDia","saidaDia"].forEach(idCampo=>{
+  document.getElementById(idCampo).addEventListener("input",calcularResultadoDia);
+});
+
+/* ---------- SALVAR DIA ---------- */
+
+function salvarDia(){
+
+  const meta=metaAtiva();
+  if(!meta){
+    alert("Crie uma meta primeiro.");
+    return;
+  }
+
+  const date=document.getElementById("diaData").value||hoje();
+  const obs=document.getElementById("diaObs").value.trim();
+
+  let registro;
+
+  if(editandoDiaId){
+    registro=estado.daily.find(d=>d.id===editandoDiaId);
+  }
+
+  if(!registro){
+    registro={
+      id:id(),
+      goalId:meta.id,
+      movementIds:[]
+    };
+    estado.daily.push(registro);
+  }
+
+  /* Remove lançamentos financeiros anteriores deste dia */
+  if(registro.movementIds&&registro.movementIds.length){
+    estado.movements=estado.movements.filter(
+      m=>!registro.movementIds.includes(m.id)
+    );
+  }
+
+  registro.goalId=meta.id;
+  registro.date=date;
+  registro.mode=modoDia;
+  registro.initial=0;
+  registro.final=0;
+  registro.entry=0;
+  registro.exit=0;
+  registro.obs=obs;
+  registro.movementIds=[];
+
+  if(modoDia==="saldo"){
+
+    const inicial=numero("saldoInicial");
+    const final=numero("saldoFinal");
+
+    if(inicial<0||final<0){
+      alert("Os saldos não podem ser negativos.");
+      return;
+    }
+
+    if(
+      document.getElementById("saldoInicial").value===""||
+      document.getElementById("saldoFinal").value===""
+    ){
+      alert("Informe o saldo inicial e o saldo final.");
+      return;
+    }
+
+    registro.initial=inicial;
+    registro.final=final;
+
+  }else{
+
+    const entrada=numero("entradaDia");
+    const saida=numero("saidaDia");
+
+    registro.entry=entrada;
+    registro.exit=saida;
+
+    if(document.getElementById("lancarFinanceiro").checked){
+
+      if(entrada>0){
+        const mov={
+          id:id(),
+          goalId:meta.id,
+          date,
+          type:"entrada",
+          description:"Entrada do dia",
+          amount:entrada,
+          category:"Entrada"
+        };
+
+        estado.movements.push(mov);
+        registro.movementIds.push(mov.id);
       }
 
-      movimentacoes.push({
-        descricao: descricao,
-        valor: valor,
-        tipo: tipo
-      });
+      if(saida>0){
+        const mov={
+          id:id(),
+          goalId:meta.id,
+          date,
+          type:"saida",
+          description:"Saída do dia",
+          amount:saida,
+          category:document.getElementById("categoriaDia").value||"Outros"
+        };
 
-      localStorage.setItem(
-        "movimentacoes",
-        JSON.stringify(movimentacoes)
-      );
+        estado.movements.push(mov);
+        registro.movementIds.push(mov.id);
+      }
+    }
+  }
 
-      document.getElementById("descricao").value = "";
-      document.getElementById("valor").value = "";
+  salvarEstado();
+  limparFormularioDia();
+  atualizarTudo();
+}
 
-      atualizarTela();
+function limparFormularioDia(){
+
+  editandoDiaId=null;
+
+  document.getElementById("saldoInicial").value="";
+  document.getElementById("saldoFinal").value="";
+  document.getElementById("entradaDia").value="";
+  document.getElementById("saidaDia").value="";
+  document.getElementById("diaObs").value="";
+
+  document.getElementById("btnSalvarDia").textContent="Salvar dia";
+  document.getElementById("btnCancelarDia").classList.add("hidden");
+
+  selecionarModo("saldo");
+  calcularResultadoDia();
+}
+
+function editarDia(idDia){
+
+  const d=estado.daily.find(x=>x.id===idDia);
+  if(!d)return;
+
+  editandoDiaId=idDia;
+  modoDia=d.mode;
+
+  document.getElementById("diaData").value=d.date;
+  document.getElementById("diaObs").value=d.obs||"";
+
+  if(d.mode==="saldo"){
+    document.getElementById("saldoInicial").value=d.initial||"";
+    document.getElementById("saldoFinal").value=d.final||"";
+  }else{
+    document.getElementById("entradaDia").value=d.entry||"";
+    document.getElementById("saidaDia").value=d.exit||"";
+
+    if(d.category)
+      document.getElementById("categoriaDia").value=d.category;
+  }
+
+  selecionarModo(d.mode);
+
+  document.getElementById("btnSalvarDia").textContent="Salvar alterações";
+  document.getElementById("btnCancelarDia").classList.remove("hidden");
+
+  abrirAba("dia");
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function cancelarEdicaoDia(){
+  limparFormularioDia();
+}
+
+function excluirDia(idDia){
+
+  if(!confirm("Excluir este registro diário?"))return;
+
+  const d=estado.daily.find(x=>x.id===idDia);
+
+  if(d&&d.movementIds){
+    estado.movements=estado.movements.filter(
+      m=>!d.movementIds.includes(m.id)
+    );
+  }
+
+  estado.daily=estado.daily.filter(d=>d.id!==idDia);
+
+  salvarEstado();
+  atualizarTudo();
+}
+
+/* ---------- HISTÓRICO ---------- */
+
+function atualizarHistoricoDias(){
+
+  const area=document.getElementById("historicoDias");
+  const meta=metaAtiva();
+
+  if(!meta){
+    area.innerHTML='<div class="empty">Nenhuma meta ativa.</div>';
+    return;
+  }
+
+  const lista=estado.daily
+    .filter(d=>d.goalId===meta.id)
+    .slice()
+    .sort((a,b)=>b.date.localeCompare(a.date));
+
+  if(!lista.length){
+    area.innerHTML=
+      '<div class="empty">Nenhum dia registrado ainda.<br>Comece pelo Dia 1.</div>';
+    return;
+  }
+
+  area.innerHTML=lista.map(d=>{
+
+    const resultado=resultadoDiaObj(d);
+
+    return `
+      <div class="item">
+        <div class="item-info">
+          <strong>${escapeHTML(formatarData(d.date))}</strong>
+          <small>
+            ${d.mode==="saldo"
+              ?"Saldo inicial + final"
+              :"Entrada + saída"}
+            ${d.obs?" • "+escapeHTML(d.obs):""}
+          </small>
+        </div>
+
+        <div class="item-right">
+          <strong class="${resultado>=0?"green":"red"}">
+            ${resultado>=0?"+":""}${dinheiro(resultado)}
+          </strong>
+
+          <div class="actions">
+            <button class="action" onclick="editarDia('${d.id}')">Editar</button>
+            <button class="action delete" onclick="excluirDia('${d.id}')">Excluir</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+function formatarData(data){
+  if(!data)return"";
+  const p=data.split("-");
+  return p[2]+"/"+p[1]+"/"+p[0];
+}
+
+/* ---------- GASTOS ---------- */
+
+function salvarGasto(){
+
+  const meta=metaAtiva();
+  if(!meta)return;
+
+  const descricao=document.getElementById("gastoDescricao").value.trim();
+  const valor=numero("gastoValor");
+  const data=document.getElementById("gastoData").value||hoje();
+
+  if(!descricao){
+    alert("Informe a descrição do gasto.");
+    return;
+  }
+
+  if(valor<=0){
+    alert("Informe um valor válido.");
+    return;
+  }
+
+  const categoria=obterCategoriaGasto();
+  if(!categoria)return;
+
+  if(editandoGastoId){
+
+    const mov=estado.movements.find(m=>m.id===editandoGastoId);
+
+    if(mov){
+      mov.description=descricao;
+      mov.amount=valor;
+      mov.category=categoria;
+      mov.date=data;
+      mov.goalId=meta.id;
     }
 
-    function atualizarTela() {
+  }else{
 
-      let entradas = 0;
-      let saidas = 0;
+    estado.movements.push({
+      id:id(),
+      goalId:meta.id,
+      date,
+      type:"saida",
+      description:descricao,
+      amount:valor,
+      category:categoria
+    });
+  }
 
-      movimentacoes.forEach(item => {
+  salvarEstado();
+  limparFormularioGasto();
+  atualizarTudo();
+}
 
-        if (item.tipo === "entrada") {
-          entradas += item.valor;
-        } else {
-          saidas += item.valor;
+function limparFormularioGasto(){
+
+  editandoGastoId=null;
+
+  document.getElementById("gastoDescricao").value="";
+  document.getElementById("gastoValor").value="";
+  document.getElementById("gastoData").value=hoje();
+  document.getElementById("gastoCategoria").value=estado.categories[0]||"Outros";
+  document.getElementById("novaCategoria").value="";
+
+  document.getElementById("novaCategoriaBox").classList.add("hidden");
+
+  document.getElementById("btnSalvarGasto").textContent="Adicionar gasto";
+  document.getElementById("btnCancelarGasto").classList.add("hidden");
+}
+
+function editarGasto(idGasto){
+
+  const mov=estado.movements.find(m=>m.id===idGasto);
+  if(!mov)return;
+
+  editandoGastoId=idGasto;
+
+  document.getElementById("gastoDescricao").value=mov.description;
+  document.getElementById("gastoValor").value=mov.amount;
+  document.getElementById("gastoData").value=mov.date;
+
+  if(estado.categories.includes(mov.category)){
+    document.getElementById("gastoCategoria").value=mov.category;
+  }else{
+    estado.categories.push(mov.category);
+    prepararCategorias();
+    document.getElementById("gastoCategoria").value=mov.category;
+  }
+
+  document.getElementById("btnSalvarGasto").textContent="Salvar alterações";
+  document.getElementById("btnCancelarGasto").classList.remove("hidden");
+
+  abrirAba("gastos");
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function cancelarEdicaoGasto(){
+  limparFormularioGasto();
+}
+
+function excluirGasto(idGasto){
+
+  if(!confirm("Excluir este gasto?"))return;
+
+  estado.movements=estado.movements.filter(m=>m.id!==idGasto);
+
+  /* Se estava ligado a um registro diário, remove o vínculo */
+  estado.daily.forEach(d=>{
+    if(d.movementIds)
+      d.movementIds=d.movementIds.filter(x=>x!==idGasto);
+  });
+
+  salvarEstado();
+  atualizarTudo();
+}
+
+function atualizarListaGastos(){
+
+  const area=document.getElementById("listaGastos");
+  const meta=metaAtiva();
+
+  if(!meta){
+    area.innerHTML='<div class="empty">Nenhuma meta ativa.</div>';
+    return;
+  }
+
+  const lista=movimentosMeta(meta)
+    .filter(m=>m.type==="saida")
+    .slice()
+    .sort((a,b)=>b.date.localeCompare(a.date));
+
+  if(!lista.length){
+    area.innerHTML='<div class="empty">Nenhum gasto registrado.</div>';
+    return;
+  }
+
+  area.innerHTML=lista.map(m=>`
+    <div class="item">
+      <div class="item-info">
+        <strong>${escapeHTML(m.description)}</strong>
+        <small>
+          ${escapeHTML(m.category||"Outros")} • ${formatarData(m.date)}
+        </small>
+      </div>
+
+      <div class="item-right">
+        <strong class="red">-${dinheiro(m.amount)}</strong>
+        <div class="actions">
+          <button class="action" onclick="editarGasto('${m.id}')">Editar</button>
+          <button class="action delete" onclick="excluirGasto('${m.id}')">Excluir</button>
+        </div>
+      </div>
+    </div>
+  `).join("");
+}
+
+/* ---------- ENTRADAS ---------- */
+
+function adicionarEntrada(){
+
+  const meta=metaAtiva();
+  if(!meta)return;
+
+  const descricao=prompt("Descrição da entrada:");
+  if(descricao===null)return;
+
+  const valor=parseFloat(
+    prompt("Valor da entrada:")
+  );
+
+  if(!valor||valor<=0){
+    alert("Valor inválido.");
+    return;
+  }
+
+  estado.movements.push({
+    id:id(),
+    goalId:meta.id,
+    date:hoje(),
+    type:"entrada",
+    description:descricao.trim()||"Entrada",
+    amount:valor,
+    category:"Entrada"
+  });
+
+  salvarEstado();
+  atualizarTudo();
+}
+
+/* ---------- METAS ---------- */
+
+function adicionarMeta(){
+
+  const name=document.getElementById("novaMetaNome").value.trim()||"Nova meta";
+  const target=numero("novaMetaValor");
+  const days=Number(document.getElementById("novaMetaDias").value);
+  const start=document.getElementById("novaMetaInicio").value||hoje();
+  const limit=numero("novaMetaLimite");
+
+  if(target<=0||days<=0){
+    alert("Informe valor e quantidade de dias válidos.");
+    return;
+  }
+
+  const meta={
+    id:id(),
+    name,
+    target,
+    days,
+    start,
+    limit,
+    createdAt:new Date().toISOString()
+  };
+
+  estado.goals.push(meta);
+  estado.activeGoalId=meta.id;
+
+  salvarEstado();
+
+  document.getElementById("novaMetaNome").value="";
+  document.getElementById("novaMetaValor").value="";
+  document.getElementById("novaMetaDias").value="";
+  document.getElementById("novaMetaInicio").value=hoje();
+  document.getElementById("novaMetaLimite").value="";
+
+  atualizarTudo();
+  alert("Nova meta criada!");
+}
+
+function editarMeta(idMeta){
+
+  const meta=estado.goals.find(g=>g.id===idMeta);
+  if(!meta)return;
+
+  const nome=prompt("Nome da meta:",meta.name);
+  if(nome===null)return;
+
+  const valor=prompt("Valor da meta:",meta.target);
+  if(valor===null)return;
+
+  const dias=prompt("Quantidade de dias:",meta.days);
+  if(dias===null)return;
+
+  const limite=prompt("Limite de gastos (0 para sem limite):",meta.limit||0);
+  if(limite===null)return;
+
+  if(parseFloat(valor)<=0||parseInt(dias)<=0){
+    alert("Valores inválidos.");
+    return;
+  }
+
+  meta.name=nome.trim()||meta.name;
+  meta.target=parseFloat(valor);
+  meta.days=parseInt(dias);
+  meta.limit=parseFloat(limite)||0;
+
+  salvarEstado();
+  atualizarTudo();
+}
+
+function selecionarMeta(idMeta){
+
+  estado.activeGoalId=idMeta;
+  salvarEstado();
+  atualizarTudo();
+  abrirAba("inicio");
+}
+
+function excluirMeta(idMeta){
+
+  if(estado.goals.length<=1){
+    alert("Você precisa manter pelo menos uma meta.");
+    return;
+  }
+
+  const meta=estado.goals.find(g=>g.id===idMeta);
+
+  if(!meta)return;
+
+  if(!confirm(
+    'Excluir a meta "'+meta.name+'"? Os lançamentos dela também serão apagados.'
+  ))return;
+
+  estado.goals=estado.goals.filter(g=>g.id!==idMeta);
+  estado.movements=estado.movements.filter(m=>m.goalId!==idMeta);
+  estado.daily=estado.daily.filter(d=>d.goalId!==idMeta);
+
+  if(estado.activeGoalId===idMeta)
+    estado.activeGoalId=estado.goals[0].id;
+
+  salvarEstado();
+  atualizarTudo();
+}
+
+function atualizarListaMetas(){
+
+  const area=document.getElementById("listaMetas");
+
+  if(!estado.goals.length){
+    area.innerHTML='<div class="empty">Nenhuma meta.</div>';
+    return;
+  }
+
+  area.innerHTML=estado.goals.map(meta=>{
+
+    const t=totaisMeta(meta);
+    const pct=progresso(meta);
+
+    return `
+      <div class="goal-card ${meta.id===estado.activeGoalId?"selected":""}">
+        <div class="goal-top">
+          <div>
+            <h3>${escapeHTML(meta.name)}</h3>
+            <span class="badge">
+              ${meta.id===estado.activeGoalId?"Meta ativa":"Meta"}
+            </span>
+          </div>
+          <div class="goal-percent">${Math.round(pct)}%</div>
+        </div>
+
+        <div class="progress" style="margin-top:14px">
+          <div style="width:${pct}%;background:var(--green)"></div>
+        </div>
+
+        <div class="goal-meta">
+          <span>${dinheiro(t.resultado)}</span>
+          <span>${dinheiro(meta.target)}</span>
+        </div>
+
+        <div class="goal-meta">
+          <span>${diasRestantes(meta)} dias restantes</span>
+          <span>Início: ${formatarData(meta.start)}</span>
+        </div>
+
+        <div class="goal-actions">
+          <button class="action" onclick="selecionarMeta('${meta.id}')">
+            Usar esta
+          </button>
+          <button class="action" onclick="editarMeta('${meta.id}')">
+            Editar
+          </button>
+          <button class="action delete" onclick="excluirMeta('${meta.id}')">
+            Excluir
+          </button>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+/* ---------- DADOS ---------- */
+
+function exportarDados(){
+
+  const texto=JSON.stringify(estado,null,2);
+  const blob=new Blob([texto],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+
+  const a=document.createElement("a");
+  a.href=url;
+  a.download="meu-controle-backup.json";
+  a.click();
+
+  URL.revokeObjectURL(url);
+}
+
+function importarDados(){
+
+  const input=document.createElement("input");
+  input.type="file";
+  input.accept=".json,application/json";
+
+  input.onchange=e=>{
+
+    const file=e.target.files[0];
+    if(!file)return;
+
+    const reader=new FileReader();
+
+    reader.onload=event=>{
+
+      try{
+
+        const dados=JSON.parse(event.target.result);
+
+        if(
+          !dados||
+          !Array.isArray(dados.goals)||
+          !Array.isArray(dados.movements)
+        ){
+          throw new Error();
         }
 
-      });
+        if(confirm("Importar estes dados e substituir os atuais?")){
 
-      const saldo = entradas - saidas;
+          estado=dados;
+          estado.daily=estado.daily||[];
+          estado.categories=estado.categories||CATEGORIAS_PADRAO.slice();
+          estado.activeGoalId=
+            estado.activeGoalId||estado.goals[0]?.id||null;
 
-      document.getElementById("entradas").textContent =
-        formatar(entradas);
+          salvarEstado();
 
-      document.getElementById("saidas").textContent =
-        formatar(saidas);
+          location.reload();
+        }
 
-      document.getElementById("saldo").textContent =
-        formatar(saldo);
-
-      const lista =
-        document.getElementById("lista");
-
-      if (movimentacoes.length === 0) {
-
-        lista.innerHTML =
-          '<div class="vazio">Nenhuma movimentação adicionada.</div>';
-
-        return;
+      }catch(e){
+        alert("Arquivo de backup inválido.");
       }
+    };
 
-      lista.innerHTML = "";
+    reader.readAsText(file);
+  };
 
-      movimentacoes
-        .slice()
-        .reverse()
-        .forEach(item => {
+  input.click();
+}
 
-          const div =
-            document.createElement("div");
+function apagarTudo(){
 
-          div.className = "item";
+  if(!confirm("ATENÇÃO: isso apagará todas as metas, gastos e registros deste aparelho. Continuar?"))
+    return;
 
-          const sinal =
-            item.tipo === "entrada" ? "+" : "-";
+  if(!confirm("Tem certeza? Esta ação não pode ser desfeita."))
+    return;
 
-          const classe =
-            item.tipo === "entrada"
-              ? "verde"
-              : "vermelho";
+  localStorage.removeItem(STORAGE_KEY);
+  localStorage.removeItem("movimentacoes");
 
-          div.innerHTML = `
-            <div class="item-info">
-              <strong>${item.descricao}</strong>
-              <small>
-                ${item.tipo === "entrada" ? "Entrada" : "Saída"}
-              </small>
-            </div>
+  location.reload();
+}
 
-            <div class="item-valor ${classe}">
-              ${sinal} ${formatar(item.valor)}
-            </div>
-          `;
+/* ---------- ATUALIZAÇÃO GERAL ---------- */
 
-          lista.appendChild(div);
+function atualizarTudo(){
 
-        });
-    }
+  if(!estado.goals.length)return;
 
-    atualizarTela();
-  </script>
+  if(!estado.activeGoalId)
+    estado.activeGoalId=estado.goals[0].id;
+
+  prepararCategorias();
+  atualizarSelectMeta();
+  atualizarDashboard();
+  atualizarHistoricoDias();
+  atualizarListaGastos();
+  atualizarListaMetas();
+
+  salvarEstado();
+
+  setTimeout(desenharGrafico,50);
+}
+
+/* ---------- ADICIONAR ENTRADA PELO MENU ---------- */
+
+/*
+   O botão abaixo é criado somente no modo Início.
+   Assim o usuário consegue adicionar dinheiro sem precisar
+   sair procurando a função.
+*/
+
+const observer=new MutationObserver(()=>{
+  const box=document.querySelector("#tab-inicio .goal-select");
+
+  if(box&&!document.getElementById("btnEntradaRapida")){
+
+    const btn=document.createElement("button");
+    btn.id="btnEntradaRapida";
+    btn.className="btn";
+    btn.style.marginTop="3px";
+    btn.textContent="+ Registrar entrada";
+    btn.onclick=adicionarEntrada;
+
+    box.appendChild(btn);
+  }
+});
+
+observer.observe(document.body,{childList:true,subtree:true});
+
+window.addEventListener("resize",()=>{
+  if(!document.getElementById("tab-inicio").classList.contains("hidden"))
+    desenharGrafico();
+});
+
+/* Service Worker */
+if("serviceWorker" in navigator){
+  window.addEventListener("load",()=>{
+    navigator.serviceWorker.register("./sw.js").catch(()=>{});
+  });
+}
+</script>
 
 </body>
-        </html>
+</html>
